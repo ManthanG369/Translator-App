@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" href="//ssl.gstatic.com/translate/favicon.ico" sizes="64x64">
+        <title>Translator</title>
+        <style>
+                * {
+                        margin: 0;
+                        padding: 0;
+                        font-family: Arial, Helvetica, sans-serif;
+                }
+
+               
+                .content {
+                       
+                        display: grid;
+                        grid-template-columns: 400px 400px;
+                        /* margin: auto; */
+                        justify-content: center;
+                        /* border: 1px solid red; */
+                }
+
+                .content input {
+                        width: 100%;
+                        padding-bottom: 250px;
+                        line-height: 80px;
+                        font-size: 18px;
+                }
+
+                .content select {
+                        width: 100%;
+                        height: 35px;
+                        font-size: 20px;
+                }
+
+                h1 {
+                        text-align: center;
+                        margin: 30px auto;
+                        font-size: 40px;  
+                }
+
+                .btns {
+                        /* border: 1px solid red; */
+                        margin: 10px auto;
+                        display: flex;
+                        justify-content: center;
+                }
+
+                #tranlate {
+                        padding: 7px 25px;
+                        font-size: 20px;
+                        background-color: blue;
+                        color: aliceblue;
+                        border-radius: 5px;
+                        cursor: pointer;
+                        margin: 10px 10px;
+                }
+
+                #tranlate:hover {
+                        background-color: #673ab7;
+
+                }
+
+                #voice {
+                        width: 50px;
+                }
+
+                .btns div {
+                        width: 50px;
+                        margin: 7px 10px;
+                }
+
+                .btns img:hover {
+                        background-color: rgb(125, 128, 128, 0.49);
+                        border-radius: 25px;
+                        cursor: pointer;
+                }
+        </style>
+</head>
+<h1> Translator App</h1>
+
+<div class="content">
+        <div>
+                <select name="" id="input_lang">
+                        <option value="auto" selected>Auto Dectect </option>
+                        <option value="en">English</option>
+                        <option value="ar">Arabic</option>
+                        <option value="zh">Chinese</option>
+                        <option value="fr">French</option>
+                        <option value="de">German</option>
+                        <option value="hi">Hindi</option>
+                        <option value="id">Indonesian</option>
+                        <option value="ga">Irish</option>
+                        <option value="it">Italian</option>
+                        <option value="ja">Japanese</option>
+                        <option value="ko">Korean</option>
+                        <option value="pl">Polish</option>
+                        <option value="pt">Portuguese</option>
+                        <option value="ru">Russian</option>
+                        <option value="es">Spanish</option>
+                        <option value="tr">Turkish</option>
+                </select>
+                <input type="search" name="" id="search_lang" placeholder="Type something here">
+        </div>
+        <div>
+                <select name="" id="output_lang">
+                        <option value="en">English</option>
+                        <option value="ar">Arabic</option>
+                        <option value="zh">Chinese</option>
+                        <option value="fr">French</option>
+                        <option value="de">German</option>
+                        <option value="hi">Hindi</option>
+                        <option value="id">Indonesian</option>
+                        <option value="ga">Irish</option>
+                        <option value="it">Italian</option>
+                        <option value="ja">Japanese</option>
+                        <option value="ko">Korean</option>
+                        <option value="pl">Polish</option>
+                        <option value="pt">Portuguese</option>
+                        <option value="ru">Russian</option>
+                        <option value="es">Spanish</option>
+                        <option value="tr">Turkish</option>
+                </select>
+                <input type="search" name="" id="out_lang">
+        </div>
+</div>
+<div class="btns">
+        <div><img id="voice" src="./voice-icon.png" alt="" srcset=""></div>
+        <button id="tranlate" onclick="tranlate()">Tranlate</button>
+</div>
+
+<body>
+
+</body>
+<script>
+        var voice = document.getElementById("voice")
+        voice.addEventListener("click", record);
+
+
+        function record() {
+                // document.getElementById("search_lang").value=null
+                document.getElementById("search_lang").placeholder = "Speak Something ...."
+                var recognition = new webkitSpeechRecognition();
+                recognition.lang = "en-GB";
+                recognition.onresult = function (event) {
+                        document.getElementById("search_lang").value = event.results[0][0].transcript
+                }
+
+                recognition.start();
+        }
+
+
+
+        async function tranlate() {
+
+                let query = document.getElementById("search_lang").value
+                let s = document.getElementById("input_lang").value
+                let t = document.getElementById("output_lang").value
+                try {
+                        let res = await fetch("https://libretranslate.de/translate", {
+                                method: "POST",
+                                body: JSON.stringify({
+                                        q: `${query}`,
+                                        source: `${s}`,
+                                        target: `${t}`
+                                }),
+                                headers: { "Content-Type": "application/json" }
+                        });
+                        // const data=
+                        let data = await res.json();
+                        console.log('data:', data.translatedText)
+                        showTheResult(data.translatedText)
+                } catch (e) {
+                        console.log('e:', e)
+                }
+
+        }
+        // tranlate()
+        // console.log()
+
+        function showTheResult(data) {
+                console.log('data:', data)
+                let out = document.getElementById("out_lang")
+                out.value = data;
+                document.getElementById("search_lang").placeholder = "Type something here"
+        }
+</script>
+
+</html>
