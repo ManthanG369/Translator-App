@@ -1,2 +1,2 @@
 
-check out app-->
+# [check this out] (https://manthans-translator.netlify.app/)
